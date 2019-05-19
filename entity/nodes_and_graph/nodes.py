@@ -57,7 +57,7 @@ class VNF:
         if request.Fk != self.webFunction:
             raise Exception("the kind of request is not suitable for the VNF")
         #change the attributes of the VNF entity
-        self.calcap = self.calcap - request.package_rate
+        self.rest_calcap = self.rest_calcap - request.package_rate
 
 
 #webFunction
