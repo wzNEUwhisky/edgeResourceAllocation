@@ -30,6 +30,7 @@ class SDN_controller:
 
         return nearest_node
 
+sdn = SDN_controller()
 
 
 

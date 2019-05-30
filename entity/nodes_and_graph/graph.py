@@ -62,7 +62,7 @@ class Graph:
 
         #create web functions
         for i in range(self.web_function_number):
-            functionCost_per_speed = np.random.uniform(self.webcap[0]/self.packetrate[1],self.webcap[1]/self.packetrate[1])
+            functionCost_per_speed = int(np.random.uniform(self.webcap[0]/self.packetrate[1],self.webcap[1]/self.packetrate[1]))
             '''
             这里解释一下0.5——5的来历：
             因为整个网络中网络功能的能力需求是40——400M
