@@ -30,6 +30,29 @@ class SDN_controller:
 
         return nearest_node
 
+    #return if it is successful
+    def getrequest(self,request,cl,action):
+        if(action == 1):
+            #create a new VNF
+            if(cl.rest_calcap < request.web_function.VNF_calcap):
+                #this means the rest calculation capacity can not offer a new VNF for this web function
+                cl.wait_list.append(request)
+            else:
+                cl.create_VNF_entity(request.web_function.VNF_calcap)
+        else:
+            #reuse the VNF which is existed
+            flag = False #judge if the vnf existed can be used
+            for vnf in cl.VNF_list:
+                if(vnf.webFunction.__eq__(request.web_function)):
+                    if(vnf.rest_calcap > request.package_rate):
+                        vnf.execute_request(request)
+                        flag = True
+
+            if(flag == False):
+                #this means no vnf existed can be used
+                cl.wait_list.append(request)
+
+
 sdn = SDN_controller()
 
 
