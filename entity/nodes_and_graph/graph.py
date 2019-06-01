@@ -1,5 +1,6 @@
 import numpy as np
 from nodes import *
+import math
 '''
 @author ZiQi Wei
 @date 2019.5.18
@@ -8,7 +9,7 @@ from nodes import *
 class Graph:
 
     def __init__(self, edgeRange=20, APs=100, cloudlets=20, calcap=(2000,4000),\
-                 web_functions=20, webcap=(40,400), AP_delay=(0.002,0.005),\
+                 web_functions=20, webcap=(80,400), AP_delay=(0.002,0.005),\
                  requests=1000, packetrate=(20,80), delay=(0.2,1.2),\
                  requestslot=(1,5), operation_price=0.25, init_price=(20,50),\
                  packet_transmission_price=(0.002,0.005)):
@@ -62,7 +63,7 @@ class Graph:
 
         #create web functions
         for i in range(self.web_function_number):
-            functionCost_per_speed = int(np.random.uniform(self.webcap[0]/self.packetrate[1],self.webcap[1]/self.packetrate[1]))
+            functionCost_per_speed = np.random.randint(math.ceil(self.webcap[0]/self.packetrate[1]),math.ceil(self.webcap[1]/self.packetrate[1]))
             '''
             这里解释一下0.5——5的来历：
             因为整个网络中网络功能的能力需求是40——400M

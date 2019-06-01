@@ -29,7 +29,7 @@ class CL(AP):
         self.calcap = calcap  # calculation capacity
         self.rest_calcap = calcap # the rest of calculation capacity, it will equals to calculation capacity when init
         self.VNF_list = []
-        self.wait_list = []
+        self.request_list = [] #restore the request in this CL
 
     #the method of create the VNF entity
     def create_VNF_entity(self, webfunction):

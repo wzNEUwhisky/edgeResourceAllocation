@@ -14,4 +14,8 @@ class Request:
         self.slots_during = Tk #The time during of the request
         self.max_time = Dk #Dk is the limited time delay from request start to request finish
 
+        self.rest_packet = self.package_rate * self.slots_during #the rest of the packet which has not been deal with
+        self.run_time = 0 #the time from request start until now
+
+
 
