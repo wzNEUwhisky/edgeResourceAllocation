@@ -4,5 +4,11 @@
         graph.py:拓扑图结构文件
         nodes.py:AP节点，CL节点，网络功能，VNF文件
         request.py:请求文件
+        SDN_contoller:SDN控制器
     </nodes_and_graph>
+    <nn>
+        DDPG:DDPG网络，暂时用不上
+        DQN:DQN网络
+        test:程序入口
+    </nn>
 </entity>
