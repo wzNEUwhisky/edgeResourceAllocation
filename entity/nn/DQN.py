@@ -6,7 +6,7 @@ import pandas as pd
 class DQN:
 
     def __init__(self,n_actions,n_features,action_size=2, learning_rate=0.01,reward_decay=0.9,\
-                 e_greedy=0.9,replace_target_iter=300,memory_size=500,\
+                 e_greedy=0.9,replace_target_iter=300,memory_size=20000,\
                  batch_size=32,e_greedy_increment=None,output_graph=False):
         self.n_actions = n_actions
         self.n_features = n_features
