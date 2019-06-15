@@ -20,7 +20,7 @@ class SDN_controller:
         self.action_size = len(self.actionSpace)
 
         #get the feature size
-        self.feature_size = 5+graph.cloudlet_number*graph.web_function_number*2 #dimension number of the state
+        self.feature_size = 5+self.graph.cloudlet_number*self.graph.web_function_number*2 #dimension number of the state
         '''
         这里说一下公式的来源：
         对于状态的维度来说，首先包含了request的维度：5

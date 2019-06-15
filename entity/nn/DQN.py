@@ -7,14 +7,14 @@ class DQN:
 
     def __init__(self,n_actions,n_features,action_size=2, learning_rate=0.01,reward_decay=0.9,\
                  e_greedy=0.9,replace_target_iter=300,memory_size=20000,\
-                 batch_size=32,e_greedy_increment=None,output_graph=False):
+                 batch_size=32,e_greedy_increment=None,output_graph=True):
         self.n_actions = n_actions
         self.n_features = n_features
         self.action_size = action_size #dimension for action: cl + [0(delete),1(create),2(reuse)]
         self.lr = learning_rate
-        self.gamma = reward_decay
-        self.epsilon_max = e_greedy
-        self.replace_target_iter = replace_target_iter
+        self.gamma = reward_decay # reward decreasing speed
+        self.epsilon_max = e_greedy # posibility for choosing the best q
+        self.replace_target_iter = replace_target_iter # steps between changing the target net parameter
         self.memory_size = memory_size
         self.batch_size = batch_size
         self.epsilon_increment = e_greedy_increment
@@ -36,10 +36,11 @@ class DQN:
         self.sess = tf.Session()
 
         if output_graph:
+            print("out put graph")
             tf.summary.FileWriter("logs/",self.sess.graph)
 
-        self.sess.sun(tf.initialize_all_variables)
-        self.cost_his = []
+        self.sess.run(tf.global_variables_initializer())
+        self.cost_his = [] #cost history, recording the loss of every step
 
     def _build_net(self):
         #build eval net
@@ -104,7 +105,7 @@ class DQN:
 
     def choose_action(self, observation):
         # create a new dimension
-        observation = observation[np.newaxis, :]
+        observation = observation[np.newaxis, :]# change one dimension to two dimensions
 
         if np.random.uniform() < self.epsilon:
             # forward feed the observation and get q value for every actions
@@ -142,7 +143,7 @@ class DQN:
 
         batch_index = np.arange(self.batch_size, dtype=np.int32)
         eval_act_index = batch_memory[:, self.n_features].astype(int)
-        reward = batch_memory[:, self.n_features + 1]
+        reward = batch_memory[:, self.n_features + self.action_size]
 
         q_target[batch_index, eval_act_index] = reward + self.gamma * np.max(q_next, axis=1)
 
