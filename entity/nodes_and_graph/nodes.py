@@ -41,6 +41,23 @@ class CL(AP):
     def execute_request(self):
         pass #the method how the VNF deal with the entity have to be trained
 
+    #get the calcrlation caapacity has been given for this webfunction
+    def get_cal_existed(self,webfunction):
+        cal_existed = 0
+        for vnf in self.VNF_list:
+            if vnf.webFunction.id == webfunction.id:
+                cal_existed += vnf.calcap
+
+        return cal_existed
+
+    #get the calculation capacity about the request for certain webfunction
+    def get_cal_request(self,webfunction):
+        cal_request = 0
+        for request in self.request_list:
+            if request.web_function.id == webfunction.id:
+                cal_request += request.package_rate
+        return cal_request
+
 
 
 #VNF class

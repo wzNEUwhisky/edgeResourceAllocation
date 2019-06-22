@@ -1,4 +1,5 @@
 from graph import *
+import numpy as np
 '''
 @author ZiQi Wei
 @date 2019.5.18
@@ -67,6 +68,38 @@ class SDN_controller:
         else:
             #when operate == 0, drop the request
             pass
+
+    #the method to get observation
+    def getObservation(self,request):
+        #build the observation vector
+        state = np.array([1,6+self.graph.cloudlet_number*(self.graph.web_function_number*2)],#this is the dimension of the state
+                               dtype=np.float32)
+        i = 0
+        for i in range(self.graph.cloudlet_number):
+            for web_function in self.graph.web_functions:
+                state[0][i] = self.graph.cloudlets[i].get_cal_existed(web_function) #get the cal_exist for this webfunction
+                i += 1 #point to next dimension
+                state[0][i] = self.graph.cloudlets[i].get_cal_request(web_function) #get the cal_request for this webfunction
+                i += 1 #point to next dimension
+
+        state[0][i] = request.nearest_AP.x
+        i+=1
+        state[0][i] = request.nearest_AP.y
+        i+=1
+        state[0][i] = request.web_function.id
+        i+=1
+        state[0][i] = request.package_rate
+        i+=1
+        state[0][i] = request.slots_during
+        i+=1
+        state[0][i] = request.max_time
+
+        return state
+
+    #the step after one slot
+    def step(self,actions,requests):
+        for i in range(self.graph.requests):
+            self.getrequest(requests[i],actions[i])
 
 
 sdn = SDN_controller()
