@@ -1,5 +1,7 @@
 from graph import *
+from requests import *
 import numpy as np
+from DQN import *
 '''
 @author ZiQi Wei
 @date 2019.5.18
@@ -12,6 +14,8 @@ class SDN_controller:
     def __init__(self):
         self.graph = Graph()
         self.actionSpace = []
+        self.RL = DQN(self.action_size, self.feature_size, output_graph=True)
+        self.requests = []
 
         #get the action spaces
         for cl in self.graph.cloudlets:
@@ -96,13 +100,53 @@ class SDN_controller:
 
         return state
 
+    #init all the requests
+    def create_all_requests(self):
+        for i in range(5000):
+            vk = np.random.sample(self.graph.APs)  # the nearest ap node
+            fk = np.random.sample(self.graph.web_functions)  # 1the random web_function it use
+            yk = np.random.randint(self.graph.packetrate[0], self.graph.packetrate[1] + 1)  # the random package rate
+            tk = np.random.randint(self.graph.requestslot[0],
+                                   self.graph.requestslot[1] + 1)  # the random request slot
+            dk = np.random.randint(1, 10000)  # set a random time link
+
+            request = Request(vk, fk, yk, tk, dk)
+            self.requests.append(request)
+
+
     #the step after one slot
-    def step(self,actions,requests):
-        for i in range(self.graph.requests):
-            self.getrequest(requests[i],actions[i])
+    def step(self,i):
+
+        observation = self.getObservation(self.requests[i])
+
+        action = self.RL.choose_action(observation)
+
+        observation_ = self.getNextObservation(action,self.requests[i],self.requests[i+1])
+
+        reward = self.getReward(action,self.requests[i])
+
+        self.RL.store_transition(observation, action, reward, observation_)
+
+        return reward
+    #get next observation
+    def getNextObservation(self,action,request,request_next):
+
+        self.getrequest(request,action)
+        return self.getObservation(request_next)
+
+    #the method for pass a slot
+    def passSlot(self):
+        for cl in self.graph.cloudlets:
+            for request in cl.request_list:
+                #deal with all the requests
+                pass
 
 
-sdn = SDN_controller()
+    #get the reward of this request
+    def getReward(self,action,request):
+        pass
+
+
 
 
 
