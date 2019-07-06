@@ -16,6 +16,8 @@ class SDN_controller:
         self.actionSpace = []
         self.RL = DQN(self.action_size, self.feature_size, output_graph=True)
         self.requests = []
+        self.max_request = 20000
+
 
         #get the action spaces
         for cl in self.graph.cloudlets:
@@ -57,6 +59,8 @@ class SDN_controller:
         return nearest_node
 
     #return if it is successful
+    #if the request was dropped, return false
+    #else return true and execute the operate
     def getrequest(self,request,action):
 
         cl = action[0]
@@ -64,14 +68,28 @@ class SDN_controller:
 
         if(operate == 1):
             #create a new VNF
-            cl.create_VNF_entity(request.web_function.VNF_calcap)
-            cl.request_list.append(request)
+            create_su = cl.create_VNF_entity(request.web_function.VNF_calcap)
+            if(create_su == True): #successful create
+                cl.request_list.append(request)
+                return True
+            else: #when the rest_cap can not create the VNF, drop the request
+                return False
+
         elif(operate == 2):
             #reuse the VNF which is existed
-            cl.request_list.append(request)
+            existed = False
+            for vnf in cl.VNF_list:
+                if vnf.webFunction == request.Fk:
+                    existed = True
+
+            if existed == True:
+                cl.request_list.append(request)
+                return True
+            else:  #if there is no this kind of VNF entity, create the VNF
+                return self.getrequest(request,(action[0],1))
         else:
             #when operate == 0, drop the request
-            pass
+            return False
 
     #the method to get observation
     def getObservation(self,request):
@@ -102,7 +120,7 @@ class SDN_controller:
 
     #init all the requests
     def create_all_requests(self):
-        for i in range(5000):
+        for i in range(self.max_request):
             vk = np.random.sample(self.graph.APs)  # the nearest ap node
             fk = np.random.sample(self.graph.web_functions)  # 1the random web_function it use
             yk = np.random.randint(self.graph.packetrate[0], self.graph.packetrate[1] + 1)  # the random package rate
@@ -143,7 +161,19 @@ class SDN_controller:
 
 
     #get the reward of this request
-    def getReward(self,action,request):
+    def getRewardOfRequest(self,action,request):
+        is_su = self.getrequest(action,request)
+        if is_su == False:
+            return -(request.package_rate * request.slots_during) #if drop the request, then use the length of the request being punishment
+        else:
+            if action[1] == 1: #which means create a VNF
+                '''
+                create a VNF may cause the request completed in time
+                '''
+                for request in action[0].request_list:
+                    arouse = 0
+
+
         pass
 
 

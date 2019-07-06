@@ -33,9 +33,15 @@ class CL(AP):
 
     #the method of create the VNF entity
     def create_VNF_entity(self, webfunction):
+
         new_VNF = VNF(id, webfunction)
-        self.VNF_list.append(VNF)
-        self.rest_calcap -= new_VNF.calcap
+        if(self.rest_calcap - new_VNF.calcap < 0):
+            return False
+        else:
+            self.VNF_list.append(VNF)
+            self.rest_calcap -= new_VNF.calcap
+            return True
+
 
     #the method of how VNF deal with the request
     def execute_request(self):
