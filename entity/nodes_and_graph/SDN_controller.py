@@ -177,6 +177,46 @@ class SDN_controller:
         pass
 
 
+    #get the delay by using formula
+    def getDelayInSlot(self,request,cl,slot):
+        turn = self.max_request/self.graph.requests
+        thisTurn = slot % turn
+
+        flag = False
+        for vnf in cl.VNF_list:
+            if vnf.webFunction.id == request.Fk.id:
+                flag = True
+
+        if flag == False:
+            return -1
+        else:
+            packetRate_all = 0
+            for request_temp in cl.request_list:
+                if request_temp.Fk.id == request.Fk.id:
+                    packetRate_all += request_temp.Yk
+
+            miui = 0 #number of instance * miu
+            calcap = 0 #miu
+            for vnf in cl.VNF_list:
+                if vnf.webFunction.id == request.Fk.id:
+                    miui += vnf.calcap
+                    calcap = vnf.calcap
+
+            dealDelay = request.Yk/calcap
+            queueDelay = 1/(miui - packetRate_all)
+            x_temp = abs(request.nearest_AP.x - cl.x)
+            y_temp = abs(request.nearest_AP.y - cl.y)
+            transmitDelay = 0
+            for i in range(x_temp+ y_temp):
+                transmitDelay += np.random.uniform(self.graph.AP_delay(0),self.graph.AP_delay(1))
+
+            return (dealDelay + queueDelay + transmitDelay)
+
+
+
+
+
+
 
 
 

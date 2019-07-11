@@ -8,8 +8,8 @@ import math
 
 class Graph:
 
-    def __init__(self, edgeRange=20, APs=100, cloudlets=20, calcap=(2000,4000),\
-                 web_functions=20, webcap=(80,400), AP_delay=(0.002,0.005),\
+    def __init__(self, edgeRange=20, APs=100, cloudlets=20, calcap=(20,50),\
+                 web_functions=20, webcap=(1,5), AP_delay=(0.002,0.005),\
                  requests=1000, packetrate=(20,80), delay=(0.2,1.2),\
                  requestslot=(1,5), operation_price=0.25, init_price=(20,50),\
                  packet_transmission_price=(0.002,0.005)):
